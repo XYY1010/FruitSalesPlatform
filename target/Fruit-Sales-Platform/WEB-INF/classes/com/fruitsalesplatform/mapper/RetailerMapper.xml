@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fruitsalesplatform.mapper.RetailerMapper">
+    <!-- resultMapper 映射 -->
+    <resultMap id="retailerRM" type="com.fruitsalesplatform.entity.Retailer">
+        <!-- 主键 -->
+        <id property="retailerId" column="retailerid" jdbcType="VARCHAR"/>
+        <!-- 一般属性 -->
+        <result property="name" column="name"/>
+        <result property="telephone" column="telephone"/>
+        <result property="address" column="address"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="createtime"/>
+    </resultMap>
+    <!-- 查询一个数据 -->
+    <select id="get" parameterType="String" resultMap="retailerRM">
+        SELECT * FROM retailer WHERE retailerid = #{retailerid}
+    </select>
+    <!-- SQL 片段 -->
+    <sql id="query_retailer_where">
+        <if test="name!=null">and name like #{name}</if>
+        <if test="telephone!=null">and telephone = #{telephone}</if>
+        <if test="address!=null">and address like #{address}</if>
+        <if test="status!=null">and status like #{status}</if>
+        <if test="createTime!=null">and createtime = DATE_FORMAT(#{createtime}, '%Y-%m-%d %H:%i:%s')</if>
+        <if test="startTime != null">
+            <![CDATA[and createtime <= DATE_FORMAT(#{endTime}, '%Y-%m-%d %H:%i:%s')]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[ and createtime <= DATE_FORMAT(#{endTime}, '%Y-%m-%d %H:%i:%s')]]>
+        </if>
+    </sql>
+    <!-- 查询 -->
+    <select id="find" parameterType="java.util.HashMap" resultMap="retailerRM">
+        SELECT * FROM retailer WHERE 1=1
+        <!-- sql 片段引入 -->
+        <include refid="query_retailer_where"></include>
+        <if test="startPage != null and pageSize != null">LIMIT #{startPage}, #{pageSize}</if>
+    </select>
+    <!-- 统计数量 -->
+    <select id="count" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM retailer WHERE 1 = 1
+        <include refid="query_retailer_where"></include><!-- sql 片段引入 -->
+    </select>
+    <!-- 插入语句 -->
+    <insert id="insert" parameterType="com.fruitsalesplatform.entity.Retailer">
+        INSERT INTO retailer (retailerid, name, telephone, address, status, createtime) VALUES (
+         #{retailerId, jdbcType=VARCHAR},
+         #{name, jdbcType=VARCHAR},
+         #{telephone, jdbcType=VARCHAR},
+         #{address, jdbcType=VARCHAR},
+         #{status, jdbcType=INTEGER},
+         #{createTime, jdbcType=DATE}
+        )
+    </insert>
+    <!-- 修改语句 -->
+    <update id="update" parameterType="com.fruitsalesplatform.entity.Retailer">
+        UPDATE retailer
+        <set>
+            <if test="name!=null">NAME=#{name, jdbcType=VARCHAR},</if>
+            <if test="telephone!=null">TELEPHONE=#{telephone, jdbcType=VARCHAR},</if>
+            <if test="address!=null">ADDRESS=#{address, jdbcType=VARCHAR},</if>
+            <if test="status!=null">STATUS=#{status, jdbcType=INTEGER},</if>
+            <if test="createTime!=null">CREATETIME=#{createTime, jdbc=DATE}</if>
+        </set>
+        WHERE RETAILERID = #{retailerId}
+    </update>
+    <!-- 删除一条数据 -->
+    <delete id="deleteById" parameterType="String">
+        DELETE FROM retailer WHERE retailerid=#{retailerId}
+    </delete>
+    <!-- 删除多条数据（一维字符串数组的形式） -->
+    <delete id="delete" parameterType="String">
+        DELETE FROM retailer WHERE retailerid IN
+        <foreach collection="array" item="retailerId" open="(" close=")" separator=",">
+            #{retailerId}
+        </foreach>
+    </delete>
+</mapper>

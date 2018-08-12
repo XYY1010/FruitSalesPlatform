@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!-- 全局 setting 配置，根据需要添加 -->
+    <!-- 配置别名 -->
+    <typeAliases>
+        <!-- 批量扫描别名 -->
+        <package name="com.fruitsalesplatform.entity"/>
+    </typeAliases>
+    <!-- 配置 mapper
+        由于使用 Spring 和 Mybatis 的整合包进行 Mapper 扫描，这里不需要配置了
+        但必须遵循，mapper.xml 和 mapper.java 同名且在一个目录下 -->
+    <!--<mappers></mappers>-->
+</configuration>

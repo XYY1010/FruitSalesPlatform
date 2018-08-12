@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fruitsalesplatform.mapper.AccessoryMapper">
+    <!-- resultMap 映射 -->
+    <resultMap id="AccessoryRM" type="com.fruitsalesplatform.entity.Accessory">
+        <!-- 主键 -->
+        <id property="accessoryId" column="accessoryid" jdbcType="VARCHAR"/>
+        <!-- 一般属性 -->
+        <result property="fruitId" column="fruitid" jdbcType="VARCHAR"/>
+        <result property="name" column="name"/>
+        <result property="price" column="price"/>
+        <result property="createTime" column="createtime"/>
+    </resultMap>
+    <!-- 查询一个数据 -->
+    <select id="get" parameterType="String" resultMap="AccessoryRM">
+        SELECT * FROM accessory WHERE accessoryid = #{accessoryId}
+    </select>
+    <!-- 查询 -->
+    <select id="find" parameterType="java.util.HashMap" resultMap="AccessoryRM">
+        SELECT * FROM accessory WHERE 1=1
+        <if test="fruitId!=null"> and fruitid = #{fruitId}</if>
+    </select>
+    <!-- 新增数据 -->
+    <insert id="insert" parameterType="com.fruitsalesplatform.entity.Accessory">
+        INSERT INTO accessory (accessoryid, fruitid, name, price, createtime) VALUES (
+        #{accessoryId, jdbcType=VARCHAR},
+        #{fruitId, jdbcType=VARCHAR},
+        #{name, jdbcType=VARCHAR},
+        #{price, jdbcType=DOUBLE},
+        #{createTime, jdbcType=DATE}
+        )
+    </insert>
+    <!-- 修改数据 -->
+    <update id="update" parameterType="com.fruitsalesplatform.entity.Accessory">
+        UPDATE accessory
+        <set>
+            <if test="fruitId!=null">FRUITID=#{fruitId, jdbcType=VARCHAR},</if>
+            <if test="name!=null">NAME=#{name, jdbcType=VARCHAR},</if>
+            <if test="price!=null">PRICE=#{price, jdbcType=DOUBLE},</if>
+            <if test="createTime!=null">CREATETIME=#{createTime, jdbcType=DATE}</if>
+        </set>
+        WHERE accessoryid = #{accessoryId}
+    </update>
+    <!-- 删除一条数据 -->
+    <delete id="deleteById" parameterType="String">
+        DELETE FROM accessory WHERE accessoryid = #{accessorId}
+    </delete>
+    <!-- 删除多条数据（一维字符串数组形式） -->
+    <delete id="delete" parameterType="String">
+        DELETE FROM accessory WHERE  accessoryid IN
+        <foreach collection="array" item="accessoryId" open="(" close=")" separator=",">
+            #{accessoryId}
+        </foreach>
+    </delete>
+    <!-- 删除货物下附属品 -->
+    <delete id="deleteByFruitId" parameterType="String">
+        DELETE FROM accessory WHERE fruitid = #{fruitId}
+    </delete>
+</mapper>
